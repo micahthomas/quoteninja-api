@@ -1,0 +1,14 @@
+{
+  "name": "quoteninja-api-docs",
+  "version": "2.0.0",
+  "description": "API Documentation",
+  "main": "index.html",
+  "repository": "git@github.com:micahthomas/quoteninja-api.git",
+  "author": "Micah Thomas <micahthomas4@gmail.com>",
+  "license": "UNLICENSED",
+  "private": false,
+  "dependencies": {
+    "raml2html": "^6.4.2",
+    "raml2html-material-theme": "^0.1.0"
+  }
+}

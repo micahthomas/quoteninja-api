@@ -1,0 +1,190 @@
+#%RAML 1.0
+
+title: Quote Ninja
+version: 2
+protocols: [ HTTPS ]
+mediaType: application/json
+
+baseUri: https://api.quoteninja.co/v2/bc/public
+securitySchemes:
+  custom_scheme:
+    description: Authenticate via the custom API Token
+    type: x-custom
+    describedBy:
+      headers:
+        firebasetoken:
+          description: Send the custom token with header "FirebaseToken"
+          type: string
+      responses:
+        401:
+          description: Bad Token
+
+types:
+  Customer:
+    type: object
+    properties:
+      name: string
+      company?: string
+      email:
+        type: string
+        description: Email Address, can be multiple joined by ';'
+        examples:
+          single: "test@example.com"
+          multiple: "test@example.com;test2@example.com"
+      phone?: string
+      address?: string
+      address-2?: string
+      city?: string
+      state?:
+        type: string
+        description: State in Short Form
+        example: "TX"
+      zipcode?: string
+      country:
+        type: string
+        description: Country Code in ISO format
+        example: "US"
+
+  ProductOption:
+    type: object
+    properties:
+      display_name: string
+      value: string
+
+  File:
+    type: object
+    properties:
+      attach: boolean
+      name: string
+      size:
+        type: number
+        description: Size of the file in MB
+      type:
+        enum: [
+          "image/jpeg",
+          "application/pdf"
+        ]
+      url: string
+
+  Product:
+    type: object
+    properties:
+      id: number
+      qty: number
+      product_options?: ProductOption[]
+
+  Quote:
+    type: object
+    properties:
+      customer: Customer
+      products: Product[]
+      origin:
+        enum: [ external-api ]
+      related_files?: File[]
+
+
+/quote:
+  get:
+    securedBy: custom_scheme
+    description: Retrieve an Existing Quote
+    queryParameters:
+      storeId:
+        type: string
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            type: Quote
+
+  post:
+    securedBy: custom_scheme
+    description: Create a Quote
+    queryParameters:
+      storeId:
+        type: string
+        required: true
+    body:
+      application/json:
+        type: Quote
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+              quote_id: string
+              quote: Quote
+
+  put:
+    securedBy: custom_scheme
+    description: Modify an Existing Quote
+    queryParameters:
+      storeId:
+        type: string
+        required: true
+      quoteId:
+        type: string
+        required: true
+    body:
+      application/json:
+        type: Quote
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+              quote: Quote
+              success: boolean
+
+  delete:
+    securedBy: custom_scheme
+    description: Delete an Existing Quote
+    queryParameters:
+      storeId:
+        type: string
+        required: true
+      quoteId:
+        type: string
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+              quote: Quote
+              success: boolean
+
+  /send:
+    post:
+      securedBy: custom_scheme
+      description: Send Quote to Customer
+      queryParameters:
+        storeId:
+          type: string
+          required: true
+        quoteId:
+          type: string
+          required: true
+        templateId:
+          type: string
+          required: true
+      responses:
+        200:
+          body:
+            application/json:
+              type: object
+              properties:
+                quoteId: string
+                success: boolean
+                email:
+                  type: object
+                  properties:
+                    subject: string
+                    html: string
+                    attached_files: File[]
+                address: string[]
