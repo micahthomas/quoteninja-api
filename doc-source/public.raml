@@ -9,8 +9,11 @@ securitySchemes:
     type: x-custom
     describedBy:
       headers:
+        x-api-client:
+          description: Send the API Client ID via header (usually the storeid)
+          type: string
         x-api-token:
-          description: Send the custom token with header "x-api-token"
+          description: Send the API Token via header
           type: string
       responses:
         401:
