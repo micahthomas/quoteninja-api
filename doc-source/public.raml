@@ -92,6 +92,15 @@ types:
       qty: number
       product_options?: ListOfProductOptions
   ListOfProducts: Product[]
+  ListOfProductsReturned:
+    type: object
+      properties:
+        /.*/: Product
+      description: List of Products (Object Map), each key in the object has a corresponding Product
+      example:
+        product-key-1:
+          id: 1
+          qty: 1
 
   Quote:
     type: object
@@ -101,6 +110,18 @@ types:
         required: true
       customer: Customer
       products: ListOfProducts
+      origin:
+        enum: [ external-api ]
+      related_files?: ListOfFiles
+
+  QuoteReturned:
+    type: object
+    properties:
+      user_id:
+        type: string
+        required: true
+      customer: Customer
+      products: ListOfProductsReturned
       origin:
         enum: [ external-api ]
       related_files?: ListOfFiles
@@ -120,7 +141,7 @@ types:
       200:
         body:
           application/json:
-            type: Quote
+            type: QuoteReturned
 
   post:
     securedBy: custom_scheme
