@@ -94,13 +94,13 @@ types:
   ListOfProducts: Product[]
   ListOfProductsReturned:
     type: object
-      properties:
-        /.*/: Product
-      description: List of Products (Object Map), each key in the object has a corresponding Product
-      example:
-        product-key-1:
-          id: 1
-          qty: 1
+    properties:
+      /.*/: Product
+    description: List of Products (Object Map), each key in the object has a corresponding Product
+    example:
+      product-key-1:
+        id: 1
+        qty: 1
 
   Quote:
     type: object
