@@ -217,12 +217,16 @@ types:
           type: string
           required: true
       body: 
-        from?:
+        application/json:
           type: object
+          required: false
           properties:
-            name: string
-            email: string
-        subject?: string
+            from?:
+              type: object
+              properties:
+                name: string
+                email: string
+            subject?: string
 
       responses:
         200:
