@@ -50,18 +50,7 @@ types:
     properties:
       display_name: string
       value: string
-  ListOfProductOptions:
-    type: object
-    properties:
-      /.*/: ProductOption
-    description: List of ProductOptions (Object Map), each key in the object has a corresponding option
-    example:
-      option-1:
-        display_name: 'Size:'
-        value: 'XL'
-      option-2:
-        display_name: 'Color:'
-        value: 'Red'
+  ListOfProductOptions: ProductOption[]
 
   File:
     type: object
@@ -224,6 +213,14 @@ types:
         templateId:
           type: string
           required: true
+      body: 
+        from?:
+          type: object
+          properties:
+            name: string
+            email: string
+        subject?: string
+
       responses:
         200:
           body:
