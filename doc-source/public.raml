@@ -91,25 +91,7 @@ types:
       id: number
       qty: number
       product_options?: ListOfProductOptions
-  ListOfProducts:
-    type: object
-    properties:
-      /.*/: Product
-    description: List of Products (Object Map), each key in the object has a corresponding Product
-    example:
-      product-1:
-        id: 1
-        qty: 1
-      product-2:
-        id: 2
-        qty: 5
-        product_options:
-          option1:
-            display_name: 'Size:'
-            value: 'XL'
-          option2:
-            display_name: 'Color:'
-            value: 'Red'
+  ListOfProducts: Product[]
 
   Quote:
     type: object
