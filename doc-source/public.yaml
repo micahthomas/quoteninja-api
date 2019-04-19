@@ -11,9 +11,7 @@ servers:
   -
     url: 'https://api.quoteninja.com/v3/bc/public'
 security:
-  -
-    AuthToken: []
-  -
+  - AuthToken: []
     AuthClient: []
 components:
   parameters:

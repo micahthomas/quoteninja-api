@@ -1,24 +1,18 @@
 {
-  "name"        : "quoteninja-api-docs",
-  "version"     : "2.0.0",
-  "description" : "API Documentation",
-  "main"        : "index.html",
-  "repository"  : "git@github.com:micahthomas/quoteninja-api.git",
-  "author"      : "Micah Thomas <micahthomas4@gmail.com>",
-  "license"     : "UNLICENSED",
-  "private"     : false,
+  "name": "quoteninja-api-docs",
+  "version": "2.0.0",
+  "description": "API Documentation",
+  "main": "index.html",
+  "repository": "git@github.com:micahthomas/quoteninja-api.git",
+  "author": "Micah Thomas <micahthomas4@gmail.com>",
+  "license": "UNLICENSED",
+  "private": false,
   "dependencies": {
-    "live-server"             : "^1.2.0",
-    "raml2html"               : "^6.4.2",
-    "raml2html-material-theme": "^0.1.0",
-    "raml2html-slate-theme"   : "^2.2.0",
-    "watch-run"               : "^1.2.5"
+    "redoc-cli": "^0.8.3"
   },
   "scripts": {
-    "build": 
-      "raml2html --theme 'raml2html-material-theme' --i doc-source/public.raml --o docs/index.html",
-    "watch"     : "watch-run -p 'doc-source/*.raml' 'yarn build'",
-    "serve"     : "live-server 'docs/'",
-    "dev-server": "yarn watch & yarn serve"
+    "build": "redoc-cli bundle doc-source/public.yaml --output docs/index.html",
+    "serve": "redoc-cli serve doc-source/public.yaml",
+    "watch":"redoc-cli serve doc-source/public.yaml --watch" 
   }
 }
