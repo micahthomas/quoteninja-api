@@ -1,0 +1,389 @@
+openapi: 3.0.0
+info:
+  title: 'Quote Ninja Public API'
+  description: 'This API will allow you to retrieve, update and send quotes through Quote Ninja'
+  version: 3.0.0
+  contact:
+    name: 'QuoteNinja API'
+    email: support@quoteninja.com
+  termsOfService: 'https://quoteninja.com/terms-of-service'
+servers:
+  -
+    url: 'https://api.quoteninja.com/v3/bc/public'
+security:
+  -
+    AuthToken: []
+  -
+    AuthClient: []
+components:
+  parameters:
+    storeId:
+      name: storeId
+      in: query
+      description: '**Store ID**'
+      required: true
+      schema:
+        type: string
+    quoteId:
+      name: quoteId
+      in: query
+      description: '**Quote ID**'
+      required: true
+      schema:
+        type: string
+  requestBodies:
+    SearchQueryFilter:
+      description: 'Search Query & Filter'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SearchQueryFilter'
+    CreateQuote:
+      description: 'Create Quote'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateQuote'
+    SendQuote:
+      description: 'Send Quote'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SendQuote'
+  schemas:
+    SendQuote:
+      title: SendQuote
+      type: object
+      properties:
+        from:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+        subject:
+          type: string
+    CreateQuote:
+      title: CreateQuote
+      type: object
+      properties:
+        customer:
+          $ref: '#/components/schemas/Customer'
+        user_id:
+          type: string
+          required: true
+        products:
+          $ref: '#/components/schemas/QuoteProducts'
+        origin:
+          type: string
+          enum: ['external-api']
+        related_files:
+          $ref: '#/components/schemas/RelatedFiles'
+    File:
+      title: File
+      type: object
+      properties:
+        attach:
+          type: boolean
+        name:
+          type: string
+        size:
+          type: number
+          description: "Size of the file in MB"
+        type:
+          type: string
+          enum: ["image/jpeg", "application/pdf"]
+        url:
+          type: string
+    RelatedFiles:
+      title: RelatedFiles
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/File'
+    SearchQueryFilter:
+      title: SearchQueryFilter
+      type: object
+      properties:
+        size:
+          type: number
+          default: 10
+        from:
+          type: number
+          default: 0
+        search:
+          type: string
+          default: ""
+          example: 'ACME Company'
+        user_id:
+          type: string
+          default: null
+        status:
+          type: string
+          enum:
+            - all
+            - new
+            - draft
+            - sent
+            - delivered
+            - opened
+          default: all
+        tags:
+          type: array
+          items:
+            type: string
+          example: []
+    SearchResult:
+      title: SearchResult
+      type: object
+      properties:
+        customer:
+          $ref: '#/components/schemas/Customer'
+        created:
+          type: number
+          description: 'Milliseconds since EPOCH UTC'
+        updated:
+          type: number
+          description: 'Milliseconds since EPOCH UTC'
+        quote_id:
+          type: string
+          description: 'Quote Name'
+          example: QN5000
+        status:
+          type: string
+          description: 'Quote Status'
+          example: new
+        user_id:
+          type: string
+          description: 'Assigned User ID'
+        price_total:
+          type: number
+        discount_total:
+          type: number
+        quote_total:
+          type: number
+        is_archived:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+          example:
+            - important
+    Customer:
+      title: Customer
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'John Doe'
+        company:
+          type: string
+          example: 'ACME Company'
+        country:
+          type: string
+          description: 'Country Code in ISO format'
+          example: US
+        email:
+          type: string
+          description: 'Email Address, can be multiple joined by '';'' or '','''
+          example: 'test@example.com;test2@example.com,test3@example.com'
+        phone:
+          type: string
+          example: 1-800-800-8888
+        address:
+          type: string
+          example: '1st Main St'
+        address-2:
+          type: string
+          example: 'Suite #101'
+        city:
+          type: string
+          example: Gotham
+        zipcode:
+          type: string
+          example: '10101'
+    ProductOption:
+      title: ProductOption
+      type: object
+      properties:
+        display_name:
+          type: string
+        selected_value:
+          type: string
+        selected_valuetext:
+          type: string
+    QuoteProduct:
+      title: QuoteProduct
+      type: object
+      properties:
+        id:
+          type: number
+        qty:
+          type: number
+        product_options:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ProductOption'
+    QuoteProducts:
+      title: QuoteProducts
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/QuoteProduct'
+    QuoteReturned:
+      title: QuoteReturned
+      type: object
+      properties:
+        user_id:
+          type: string
+        customer:
+          $ref: '#/components/schemas/Customer'
+        products:
+          $ref: '#/components/schemas/QuoteProducts'
+  securitySchemes:
+    AuthToken:
+      type: apiKey
+      description: 'Specify the API Token'
+      name: x-auth-token
+      in: header
+    AuthClient:
+      type: apiKey
+      description: 'Specify the API Client ID'
+      name: x-auth-client
+      in: header
+  responses:
+    SendQuoteResponse:
+      description: "Successfull Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+    GetQuoteResponse:
+      description: 'Successful response'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/QuoteReturned'
+    DeleteQuoteResponse:
+      description: 'Successful response'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              quote:
+                $ref: '#/components/schemas/QuoteReturned'
+              success:
+                type: boolean
+    SearchQuotesResponse:
+      description: 'Successful response'
+      content:
+        application/json:
+          schema:
+            title: 'Search Results'
+            type: object
+            properties:
+              took:
+                type: number
+              timed_out:
+                type: boolean
+              hits:
+                type: object
+                properties:
+                  total:
+                    type: number
+                    description: 'Returns the total number of quotes that match this search'
+                  hits:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        _source:
+                          $ref: '#/components/schemas/SearchResult'
+paths:
+  /quotes:
+    get:
+      tags:
+        - 'Search for Quotes'
+      summary: 'Search & Filter Quotes'
+      operationId: SearchQuotes
+      parameters:
+        -
+          $ref: '#/components/parameters/storeId'
+      requestBody:
+        $ref: '#/components/requestBodies/SearchQueryFilter'
+      responses:
+        '200':
+          $ref: '#/components/responses/SearchQuotesResponse'
+  /quote:
+    get:
+      tags:
+        - 'Create, Get, Update and Delete Quotes'
+      summary: 'Retrieve a quote'
+      operationId: GetQuote
+      parameters:
+        -
+          $ref: '#/components/parameters/storeId'
+        -
+          $ref: '#/components/parameters/quoteId'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetQuoteResponse'
+    post:
+      tags:
+        - 'Create, Get, Update and Delete Quotes'
+      summary: 'Create a Quote'
+      parameters:
+        -
+          $ref: '#/components/parameters/storeId'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateQuote'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetQuoteResponse'
+    put:
+      tags:
+        - 'Create, Get, Update and Delete Quotes'
+      summary: 'Update an existing Quote'
+      parameters:
+        -
+          $ref: '#/components/parameters/storeId'
+        -
+          $ref: '#/components/parameters/quoteId'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateQuote'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetQuoteResponse'
+    delete:
+      tags:
+        - 'Create, Get, Update and Delete Quotes'
+      summary: 'Delete an existing Quote'
+      parameters:
+        -
+          $ref: '#/components/parameters/storeId'
+        -
+          $ref: '#/components/parameters/quoteId'
+      responses:
+        '200':
+          $ref: '#/components/responses/DeleteQuoteResponse'
+  /send:
+    post:
+      tags:
+        - 'Send Quote'
+      summary: 'Send an existing Quote'
+      parameters:
+        -
+          $ref: '#/components/parameters/storeId'
+        -
+          $ref: '#/components/parameters/quoteId'
+      requestBody:
+        $ref: '#/components/requestBodies/SendQuote'
+      responses:
+        '200':
+          $ref: '#/components/responses/SendQuoteResponse'
